@@ -6,8 +6,7 @@ require('./models/model');
 require('./routes/routes')(app);
 
 app.get('/', (req, res) => {
-  // do something here
-  res.send('TWITTER CHROME EXTENSION');
+  res.send('TWITTER CHROME EXTENSION SERVER');
 })
 
 mongoose.connect(keys.mongoURI);
