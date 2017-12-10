@@ -2,8 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const keys = require('./config/keys');
 const app = express();
+require('./models/model');
+require('./routes/routes')(app);
 
-app.get('/home', (req, res) => {
+app.get('/', (req, res) => {
   // do something here
   res.send('TWITTER CHROME EXTENSION');
 })
