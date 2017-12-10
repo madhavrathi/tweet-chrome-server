@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const keys = require('./config/keys');
 const app = express();
 
-app.get('/', (req, res) => {
+app.get('/home', (req, res) => {
   // do something here
   res.send('TWITTER CHROME EXTENSION');
 })
