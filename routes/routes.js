@@ -65,7 +65,8 @@ function saveToDB(tweets) {
     );
 }
 
-function handles(handle){
+function addHandles(handle){
+
   var params = {screen_name: handle,count: '30'};
     client.get('statuses/user_timeline', params, function(error, tweets, response) {
     if (!error) {
@@ -77,5 +78,8 @@ function handles(handle){
 module.exports = (app) => {
   app.get('/get_tweets', (req,res) => {
     res.send(existing_tweets);
+  });
+  app.get('/handles', (req,res) => {
+    console.log(req.query);
   });
 }
