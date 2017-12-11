@@ -126,15 +126,17 @@ module.exports = (app) => {
   app.use(cors());
   app.options('*', cors());
 
-
   app.get('/get_tweets', (req,res) => {
     res.send(existing_tweets);
   });
+
   app.get('/handles', (req,res) => {
     if(req.query.new_handles !== undefined && req.query.removed_handles !== undefined){
       req.query.new_handles.map(addHandles);
       req.query.removed_handles.map(removeFromDB);
-      res.send('done');
+      res.send({
+        "existing_tweets":existing_tweets,"handles":handles
+      });
     }else {
       res.send('NO query sent');
     }
