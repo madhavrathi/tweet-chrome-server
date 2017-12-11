@@ -13,15 +13,17 @@ var client = new Twitter({
   access_token_secret: keys.access_token_secret
 });
 
-//Assingning Tweets from existing DB
-var existing_tweets = [],text=[],image=[],text_image=[];
+//Assingning from existing DB
+var existing_tweets = [],text=[],image=[],text_image=[],handles=[];
 Tweets.find({}, (err, tweets) => {
     existing_tweets=tweets[0];
     text=existing_tweets.text;
-    image=existing_tweets.image;
-    text_image=existing_tweets.text_image;
+    image=existing_tweets.images;
+    text_image=existing_tweets.text_images;
 });
-
+Handles.find({}, (err, h) => {
+    handles=h[0].handles;
+});
 
 function saveToDB(tweets) {
   var arrayLength = tweets.length;
@@ -68,6 +70,14 @@ function saveToDB(tweets) {
 
 function addHandles(handle){
 
+  //Save to handles
+  handles.push(handle);
+  Handles.update({},{ $set:{ handles: handles } },(err, raw) => {
+      console.log(raw);
+      }
+    );
+
+  //Save to Tweets
   var params = {screen_name: handle,count: '30'};
     client.get('statuses/user_timeline', params, function(error, tweets, response) {
     if (!error) {
@@ -75,16 +85,59 @@ function addHandles(handle){
     }
   });
 }
+// var newHandles = new Handles({
+//   handles: ['mdhvrthi']
+// }).save();
+
+function removeFromDB(handle){
+
+  //Remove handle from Handles in DB
+  handles = handles.filter(e => e !== handle);
+  Handles.update({},{ $set:{ handles: handles } },(err, raw) => {
+      console.log(raw);
+      }
+    );
+
+  //Remove tweets of handle in DB
+
+  text = text.filter(e => e.handle !== handle);
+  image = image.filter(e => e.handle !== handle);
+  text_image= text_image.filter(e => e.handle !== handle);
+  existing_tweets.text = text;
+  existing_tweets.image = image;
+  existing_tweets.text_image = text_image;
+  Tweets.update({},{ $set:
+    {
+      text: text,
+      images: image,
+      text_images: text_image
+    }
+  },(err, raw) => {
+      console.log(raw);
+      }
+    );
+
+}
 
 module.exports = (app) => {
   app.use(cors());
   app.options('*', cors());
-  
+
+
   app.get('/get_tweets', (req,res) => {
     res.send(existing_tweets);
   });
   app.get('/handles', (req,res) => {
-    console.log(req.query);
-    res.send(req.query);
+    if(req.query.new_handles !== undefined && req.query.removed_handles !== undefined){
+      req.query.new_handles.map(addHandles);
+      req.query.removed_handles.map(removeFromDB);
+      res.send('done');
+    }else {
+      res.send('NO query sent');
+    }
+  });
+
+  app.get('/gethandles', (req,res) => {
+    res.send({"handles": handles})
   });
 }
