@@ -131,14 +131,13 @@ module.exports = (app) => {
     res.send(existing_tweets);
   });
   app.get('/handles', (req,res) => {
-    addHandles('mdhvrthi')
-    // if(req.query.new_handles !== undefined && req.query.removed_handles !== undefined){
-    //   req.query.new_handles.map(addHandles);
-    //   req.query.removed_handles.map(removeFromDB);
-    //   res.send('done');
-    // }else {
-    //   res.send('NO query sent');
-    // }
+    if(req.query.new_handles !== undefined && req.query.removed_handles !== undefined){
+      req.query.new_handles.map(addHandles);
+      req.query.removed_handles.map(removeFromDB);
+      res.send('done');
+    }else {
+      res.send('NO query sent');
+    }
   });
 
   app.get('/gethandles', (req,res) => {
