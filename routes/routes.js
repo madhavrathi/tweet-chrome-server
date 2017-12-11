@@ -72,53 +72,56 @@ function saveToDB(tweets) {
 }
 
 function addHandles(handle){
+  if(handle !== ''){
+    //Save to handles
+    handles.push(handle);
+    Handles.update({},{ $set:{ handles: handles } },(err, raw) => {
+        console.log(raw);
+        }
+      );
 
-  //Save to handles
-  handles.push(handle);
-  Handles.update({},{ $set:{ handles: handles } },(err, raw) => {
-      console.log(raw);
+    //Save to Tweets
+    var params = {screen_name: handle,count: '30'};
+      client.get('statuses/user_timeline', params, function(error, tweets, response) {
+      if (!error) {
+        saveToDB(tweets);
       }
-    );
+    });
+  }
 
-  //Save to Tweets
-  var params = {screen_name: handle,count: '30'};
-    client.get('statuses/user_timeline', params, function(error, tweets, response) {
-    if (!error) {
-      saveToDB(tweets);
-    }
-  });
 }
 // var newHandles = new Handles({
 //   handles: ['mdhvrthi']
 // }).save();
 
 function removeFromDB(handle){
+  if (handle !== ''){
+    //Remove handle from Handles in DB
+    handles = handles.filter(e => e !== handle);
+    Handles.update({},{ $set:{ handles: handles } },(err, raw) => {
+        console.log(raw);
+        }
+      );
 
-  //Remove handle from Handles in DB
-  handles = handles.filter(e => e !== handle);
-  Handles.update({},{ $set:{ handles: handles } },(err, raw) => {
-      console.log(raw);
+    //Remove tweets of handle in DB
+
+    text = text.filter(e => e.handle !== handle);
+    image = image.filter(e => e.handle !== handle);
+    text_image= text_image.filter(e => e.handle !== handle);
+    existing_tweets.text = text;
+    existing_tweets.images = image;
+    existing_tweets.text_images = text_image;
+    Tweets.update({},{ $set:
+      {
+        text: text,
+        images: image,
+        text_images: text_image
       }
-    );
-
-  //Remove tweets of handle in DB
-
-  text = text.filter(e => e.handle !== handle);
-  image = image.filter(e => e.handle !== handle);
-  text_image= text_image.filter(e => e.handle !== handle);
-  existing_tweets.text = text;
-  existing_tweets.images = image;
-  existing_tweets.text_images = text_image;
-  Tweets.update({},{ $set:
-    {
-      text: text,
-      images: image,
-      text_images: text_image
-    }
-  },(err, raw) => {
-      console.log(raw);
-      }
-    );
+    },(err, raw) => {
+        console.log(raw);
+        }
+      );
+  }
 
 }
 
