@@ -138,7 +138,7 @@ module.exports = (app) => {
         "existing_tweets":existing_tweets,"handles":handles
       });
     }else {
-      res.send('NO query sent');
+      res.send('No query sent');
     }
   });
 
