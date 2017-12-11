@@ -96,7 +96,7 @@ function addHandles(handle){
 // }).save();
 
 function removeFromDB(handle){
-  if (handle !== ''){
+  if (handle !== '' && handles.indexOf(handle) !== -1){
     //Remove handle from Handles in DB
     handles = handles.filter(e => e !== handle);
     Handles.update({},{ $set:{ handles: handles } },(err, raw) => {
