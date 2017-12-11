@@ -56,8 +56,8 @@ function saveToDB(tweets) {
   //   text_images: text_image
   // }).save();
   existing_tweets.text = text;
-  existing_tweets.image = image;
-  existing_tweets.text_image = text_image;
+  existing_tweets.images = image;
+  existing_tweets.text_images = text_image;
 
   Tweets.update({},{ $set:
     {
@@ -107,8 +107,8 @@ function removeFromDB(handle){
   image = image.filter(e => e.handle !== handle);
   text_image= text_image.filter(e => e.handle !== handle);
   existing_tweets.text = text;
-  existing_tweets.image = image;
-  existing_tweets.text_image = text_image;
+  existing_tweets.images = image;
+  existing_tweets.text_images = text_image;
   Tweets.update({},{ $set:
     {
       text: text,
