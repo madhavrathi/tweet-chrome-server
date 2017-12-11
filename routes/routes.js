@@ -81,5 +81,6 @@ module.exports = (app) => {
   });
   app.get('/handles', (req,res) => {
     console.log(req.query);
+    res.send(req.query);
   });
 }
