@@ -1,6 +1,7 @@
 var Twitter = require('twitter');
 const mongoose = require('mongoose');
 const keys = require('../config/keys');
+const cors = require('cors');
 
 const Tweets = mongoose.model('tweets');
 const Handles = mongoose.model('handles');
@@ -76,6 +77,9 @@ function addHandles(handle){
 }
 
 module.exports = (app) => {
+  app.use(cors());
+  app.options('*', cors());
+  
   app.get('/get_tweets', (req,res) => {
     res.send(existing_tweets);
   });
