@@ -72,7 +72,8 @@ function saveToDB(tweets) {
 }
 
 function addHandles(handle){
-  if(handle !== ''){
+
+  if(handle !== '' && handles.indexOf(handle) === -1){
     //Save to handles
     handles.push(handle);
     Handles.update({},{ $set:{ handles: handles } },(err, raw) => {
