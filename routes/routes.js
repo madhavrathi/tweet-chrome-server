@@ -134,15 +134,22 @@ module.exports = (app) => {
   });
 
   app.get('/handles', (req,res) => {
-    if(req.query.new_handles !== undefined && req.query.removed_handles !== undefined){
-      req.query.new_handles.map(addHandles);
-      req.query.removed_handles.map(removeFromDB);
-      res.status(200).send({
-        "existing_tweets":existing_tweets,"handles":handles
+    var obj = req.query;
+    if( Object.keys(obj).length !== 0 ){
+      if(obj.new_handles){
+          //console.log(obj.new_handles);
+          obj.new_handles.map(addHandles);
+      }
+      if(obj.removed_handles){
+          //console.log(obj.removed_handles);
+          obj.removed_handles.map(removeFromDB);
+      }
+      res.send({
+        "existing_tweets": existing_tweets,
+        "handles": handles
       });
-    }else {
-      res.send('No query sent');
     }
+
   });
 
   app.get('/gethandles', (req,res) => {
