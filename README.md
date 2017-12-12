@@ -1,4 +1,3 @@
-![Image](undefined)
 # tweet-chrome server
 Front end app is hosted at [https://protected-thicket-15731.herokuapp.com/](https://protected-thicket-15731.herokuapp.com/)
 Front end is made with ReactJs. The backend server is made with NodeJS and express. The database used in backend is MongoDB.
@@ -19,7 +18,7 @@ Backend server is hosted here: [https://twitter-chrome-server.herokuapp.com/](ht
 ```javascript
 npm run dev
 ```
-![Image](undefined)
+
 ## Handles:
 - /get_tweets : For getting all the tweets
 - /handles : For updating the tweets as the handles are removed or added
