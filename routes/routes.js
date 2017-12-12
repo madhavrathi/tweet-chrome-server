@@ -148,19 +148,12 @@ module.exports = (app) => {
           //console.log(obj.removed_handles);
           obj.removed_handles.map(removeFromDB);
       }
-      var NEWTWEETS,NEWHANDLES;
-      Tweets.find({}, (err, tweets) => {
-          NEWTWEETS = tweets[0];
-      });
-      Handles.find({}, (err, h) => {
-          NEWHANDLES=h[0].handles;
-      });
+
       res.send({
-        "existing_tweets": NEWTWEETS,
-        "handles": NEWHANDLES
+        "existing_tweets": existing_tweets,
+        "handles": handles
       });
     }
-
   });
 
   app.get('/gethandles', (req,res) => {
