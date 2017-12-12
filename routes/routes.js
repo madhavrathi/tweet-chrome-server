@@ -23,6 +23,7 @@ var client = new Twitter({
   access_token_secret: keys.access_token_secret
 });
 
+var newtweet = 'none';
 //Assingning from existing DB
 var existing_tweets = [],text=[],image=[],text_image=[],handles=[];
 Tweets.find({}, (err, tweets) => {
@@ -57,6 +58,7 @@ function getNewTweets(handle){
                 {text_images: text_image}},(err, raw) => {
                   console.log(raw);});
               Main.update({handle: handle},{ $set:{text_images: h[0].text_images.unshift(obj)}},(err, raw) => {console.log(raw);});
+              newtweet = 'text_image';
             }
 
           }
@@ -75,6 +77,7 @@ function getNewTweets(handle){
                   {images: image}},(err, raw) => {
                     console.log(raw);});
                 Main.update({handle: handle},{ $set:{images: h[0].images.unshift(obj)}},(err, raw) => {console.log(raw);});
+                newtweet = 'image';
               }
 
             }else{
@@ -88,6 +91,7 @@ function getNewTweets(handle){
                 {images: image}},(err, raw) => {
                   console.log(raw);});
               Main.update({handle: handle},{ $set:{images: h[0].images.unshift(obj)}},(err, raw) => {console.log(raw);});
+              newtweet = 'image';
             }
 
 
@@ -106,6 +110,7 @@ function getNewTweets(handle){
                   console.log(raw);});
 
               Main.update({handle: handle},{ $set:{text: h[0].text.unshift(obj)}},(err, raw) => {console.log(raw);});
+              newtweet = 'text';
             }
 
           }
@@ -260,5 +265,10 @@ module.exports = (app) => {
         res.send({"handles": h[0].handles});
     });
     //res.send({"handles": handles})
+  });
+
+  app.get('/newtweet', (req,res) => {
+    res.send(newtweet);
+    newtweet = 'none';
   });
 }
