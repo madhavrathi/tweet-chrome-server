@@ -6,6 +6,15 @@ const cors = require('cors');
 const Tweets = mongoose.model('tweets');
 const Handles = mongoose.model('handles');
 
+// var newTweets = new Tweets({
+//   text: text,
+//   images: image,
+//   text_images: text_image
+// }).save();
+// var newHandles = new Handles({
+//   handles: ['mdhvrthi']
+// }).save();
+
 var client = new Twitter({
   consumer_key: keys.consumer_key,
   consumer_secret: keys.consumer_secret,
@@ -25,51 +34,6 @@ Handles.find({}, (err, h) => {
     handles=h[0].handles;
 });
 
-function saveToDB(tweets) {
-  var arrayLength = tweets.length;
-  for (var i = 0; i < arrayLength; i++) {
-
-    var obj={};
-    obj['time'] = tweets[i].created_at;
-    obj['handle'] = tweets[i].user.screen_name;
-
-      if(tweets[i].entities.media && tweets[i].text){
-        obj['text'] = tweets[i].text;
-        obj['media'] = tweets[i].entities.media;
-        text_image.push(obj);
-      }
-      else if(tweets[i].entities.media){
-        obj['media'] = tweets[i].entities.media;
-        image.push(obj);
-      }
-      else{
-        obj['text'] = tweets[i].text;
-        text.push(obj);
-      }
-  }
-  //SAVE IN MONGO DB
-
-  //
-  // var newTweets = new Tweets({
-  //   text: text,
-  //   images: image,
-  //   text_images: text_image
-  // }).save();
-  existing_tweets.text = text;
-  existing_tweets.images = image;
-  existing_tweets.text_images = text_image;
-
-  Tweets.update({},{ $set:
-    {
-      text: text,
-      images: image,
-      text_images: text_image
-    }
-  },(err, raw) => {
-      console.log(raw);
-      }
-    );
-}
 
 function addHandles(handle){
 
@@ -83,17 +47,43 @@ function addHandles(handle){
 
     //Save to Tweets
     var params = {screen_name: handle,count: '30'};
-      client.get('statuses/user_timeline', params, function(error, tweets, response) {
+    client.get('statuses/user_timeline', params, function(error, tweets, response) {
       if (!error) {
-        saveToDB(tweets);
+        //saveToDB(tweets);
+        var arrayLength = tweets.length;
+        for (var i = 0; i < arrayLength; i++) {
+
+          var obj={};
+          obj['time'] = tweets[i].created_at;
+          obj['handle'] = tweets[i].user.screen_name;
+
+            if(tweets[i].entities.media && tweets[i].text){
+              obj['text'] = tweets[i].text;
+              obj['media'] = tweets[i].entities.media;
+              text_image.push(obj);
+            }
+            else if(tweets[i].entities.media){
+              obj['media'] = tweets[i].entities.media;
+              image.push(obj);
+            }
+            else{
+              obj['text'] = tweets[i].text;
+              text.push(obj);
+            }
+        }
+
+        existing_tweets.text = text;
+        existing_tweets.images = image;
+        existing_tweets.text_images = text_image;
+        //SAVE IN MONGO DB
+        Tweets.update({},{ $set:
+          {text: text,images: image,text_images: text_image}},(err, raw) => {
+            console.log(raw);});
       }
     });
   }
 
 }
-// var newHandles = new Handles({
-//   handles: ['mdhvrthi']
-// }).save();
 
 function removeFromDB(handle){
   if (handles.indexOf(handle) !== -1){
@@ -139,6 +129,7 @@ module.exports = (app) => {
 
   app.get('/handles', (req,res) => {
     var obj = req.query;
+    console.log(obj,handles);
     if( Object.keys(obj).length !== 0 ){
       if(obj.new_handles){
           //console.log(obj.new_handles);
@@ -148,11 +139,30 @@ module.exports = (app) => {
           //console.log(obj.removed_handles);
           obj.removed_handles.map(removeFromDB);
       }
-
-      res.send({
+      console.log({
         "existing_tweets": existing_tweets,
         "handles": handles
-      });
+      })
+      setTimeout(() => {
+        res.send({
+          "existing_tweets": existing_tweets,
+          "handles": handles
+        })
+      }, 2000);
+
+      // Tweets.find({}, (err, tweets) => {
+      //     Handles.find({}, (err, h) => {
+      //       console.log({
+      //         "existing_tweets": tweets[0],
+      //         "handles": h[0].handles
+      //       });
+      //         res.send({
+      //           "existing_tweets": tweets[0],
+      //           "handles": h[0].handles
+      //         });
+      //     });
+      // });
+
     }
   });
 
