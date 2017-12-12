@@ -142,7 +142,7 @@ function addHandles(handle){
           obj['time'] = tweets[i].created_at;
           obj['handle'] = tweets[i].user.screen_name;
 
-            if(tweets[i].entities.media && tweets[i].text){
+            if(tweets[i].entities.media && (tweets[0].text.substring(0,4) !== 'http')){
               obj['text'] = tweets[i].text;
               obj['media'] = tweets[i].entities.media;
               text_image.push(obj);
