@@ -11,5 +11,13 @@ const handleSchema = new Schema({
   handles: []
 });
 
+const mainSchema = new Schema({
+  handle: 'string',
+  text: [],
+  images: [],
+  text_images: []
+});
+
 mongoose.model('tweets',tweetSchema);
 mongoose.model('handles',handleSchema);
+mongoose.model('main',mainSchema);
