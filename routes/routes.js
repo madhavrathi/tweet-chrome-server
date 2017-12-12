@@ -61,7 +61,7 @@ function getNewTweets(handle){
 
           }
           else if(tweets[0].entities.media){
-            if(h[0].images[0]){
+            if(h[0].images){
 
               if( date > new Date(h[0].images[0].time) ){
                 //console.log(date > new Date(h[0].images[0].time),date,new Date(h[0].text[0].time),handle)
@@ -141,8 +141,8 @@ function addHandles(handle){
           var obj={};
           obj['time'] = tweets[i].created_at;
           obj['handle'] = tweets[i].user.screen_name;
-
-            if(tweets[i].entities.media && (tweets[0].text.substring(0,4) !== 'http')){
+          //console.log(tweets[0].text.substring(0,4) !== 'http',tweets[0].text)
+            if(tweets[i].entities.media && (tweets[i].text.substring(0,4) !== 'http') ){
               obj['text'] = tweets[i].text;
               obj['media'] = tweets[i].entities.media;
               text_image.push(obj);
@@ -210,11 +210,14 @@ function removeFromDB(handle){
   }
 
 }
-//FUNCTION TO UPDATE IN REAL TIME //
-setInterval(() => {               //
-  handles.map(getNewTweets)       //
-}, 2000);                         //
-//FUNCTION TO UPDATE IN REAL TIME//
+//FUNCTION TO UPDATE IN REAL TIME////
+setInterval(() => {                //
+  if(handles.length > 0){          //
+    handles.map(getNewTweets)      //
+  }                                //
+                                   //
+}, 2000);                          //
+//FUNCTION TO UPDATE IN REAL TIME////
 
 module.exports = (app) => {
   app.use(cors());
@@ -229,7 +232,7 @@ module.exports = (app) => {
 
   app.get('/handles', (req,res) => {
     var obj = req.query;
-    console.log(obj,handles);
+    //console.log(obj,handles);
     if( Object.keys(obj).length !== 0 ){
       if(obj.new_handles){
           //console.log(obj.new_handles);
