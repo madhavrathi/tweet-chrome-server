@@ -43,7 +43,7 @@ function getNewTweets(handle){
           var date = new Date(tweets[0].created_at);
           //console.log(new Date(h[0].text_images[0].time),handle);
           //console.log(tweets[0]);
-          if(tweets[0].entities.media && tweets[0].text){
+          if(tweets[0].entities.media && (tweets[0].text.substring(0,4) !== 'http') ){
             if( date > new Date(h[0].text_images[0].time) ){
               //console.log(date > new Date(h[0].text_images[0].time),date,new Date(h[0].text[0].time),handle)
               var obj={};
@@ -61,8 +61,23 @@ function getNewTweets(handle){
 
           }
           else if(tweets[0].entities.media){
-            if( date > new Date(h[0].images[0].time) ){
-              //console.log(date > new Date(h[0].images[0].time),date,new Date(h[0].text[0].time),handle)
+            if(h[0].images[0]){
+
+              if( date > new Date(h[0].images[0].time) ){
+                //console.log(date > new Date(h[0].images[0].time),date,new Date(h[0].text[0].time),handle)
+                var obj={};
+                obj['time'] = tweets[0].created_at;
+                obj['handle'] = tweets[0].user.screen_name;
+                obj['media'] = tweets[0].entities.media;
+                image.push(obj);
+                existing_tweets.images = image;
+                Tweets.update({},{ $set:
+                  {images: image}},(err, raw) => {
+                    console.log(raw);});
+                Main.update({handle: handle},{ $set:{images: h[0].images.unshift(obj)}},(err, raw) => {console.log(raw);});
+              }
+
+            }else{
               var obj={};
               obj['time'] = tweets[0].created_at;
               obj['handle'] = tweets[0].user.screen_name;
@@ -74,6 +89,7 @@ function getNewTweets(handle){
                   console.log(raw);});
               Main.update({handle: handle},{ $set:{images: h[0].images.unshift(obj)}},(err, raw) => {console.log(raw);});
             }
+
 
           }
           else{
