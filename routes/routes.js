@@ -165,7 +165,7 @@ module.exports = (app) => {
 
   app.get('/gethandles', (req,res) => {
     Handles.find({}, (err, h) => {
-        res.send(h[0].handles);
+        res.send({"handles": h[0].handles});
     });
     //res.send({"handles": handles})
   });
