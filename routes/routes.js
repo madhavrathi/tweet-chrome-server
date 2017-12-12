@@ -73,7 +73,7 @@ function saveToDB(tweets) {
 
 function addHandles(handle){
 
-  if(handle !== '' && handles.indexOf(handle) === -1){
+  if(handles.indexOf(handle) === -1){
     //Save to handles
     handles.push(handle);
     Handles.update({},{ $set:{ handles: handles } },(err, raw) => {
@@ -96,7 +96,7 @@ function addHandles(handle){
 // }).save();
 
 function removeFromDB(handle){
-  if (handle !== '' && handles.indexOf(handle) !== -1){
+  if (handles.indexOf(handle) !== -1){
     //Remove handle from Handles in DB
     handles = handles.filter(e => e !== handle);
     Handles.update({},{ $set:{ handles: handles } },(err, raw) => {
@@ -131,7 +131,10 @@ module.exports = (app) => {
   app.options('*', cors());
 
   app.get('/get_tweets', (req,res) => {
-    res.status(200).send(existing_tweets);
+    // Tweets.find({}, (err, tweets) => {
+    //     res.send(tweets[0]);
+    // });
+    res.send(existing_tweets);
   });
 
   app.get('/handles', (req,res) => {
@@ -154,6 +157,6 @@ module.exports = (app) => {
   });
 
   app.get('/gethandles', (req,res) => {
-    res.status(200).send({"handles": handles})
+    res.send({"handles": handles})
   });
 }
