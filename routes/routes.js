@@ -131,10 +131,10 @@ module.exports = (app) => {
   app.options('*', cors());
 
   app.get('/get_tweets', (req,res) => {
-    // Tweets.find({}, (err, tweets) => {
-    //     res.send(tweets[0]);
-    // });
-    res.send(existing_tweets);
+    Tweets.find({}, (err, tweets) => {
+        res.send(tweets[0]);
+    });
+    //res.send(existing_tweets);
   });
 
   app.get('/handles', (req,res) => {
@@ -148,15 +148,25 @@ module.exports = (app) => {
           //console.log(obj.removed_handles);
           obj.removed_handles.map(removeFromDB);
       }
+      var NEWTWEETS,NEWHANDLES;
+      Tweets.find({}, (err, tweets) => {
+          NEWTWEETS = tweets[0];
+      });
+      Handles.find({}, (err, h) => {
+          NEWHANDLES=h[0].handles;
+      });
       res.send({
-        "existing_tweets": existing_tweets,
-        "handles": handles
+        "existing_tweets": NEWTWEETS,
+        "handles": NEWHANDLES
       });
     }
 
   });
 
   app.get('/gethandles', (req,res) => {
-    res.send({"handles": handles})
+    Handles.find({}, (err, h) => {
+        res.send(h[0].handles);
+    });
+    //res.send({"handles": handles})
   });
 }
